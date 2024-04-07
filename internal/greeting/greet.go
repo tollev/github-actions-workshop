@@ -7,7 +7,7 @@ import (
 
 func Greet(names []string) (string, error) {
 	if len(names) == 0 {
-		eturn "", errors.New("at least one name must be specified")
+		return "", errors.New("at least one name must be specified")
 	}
 
 	greeting := fmt.Sprintf("Hello %s", names[0])
