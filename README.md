@@ -18,17 +18,74 @@ The tasks in the workshop can be done using only the built-in GitHub editor. How
 
 TODO: Likely `gh repo fork --clone` or using the GitHub UI to fork the repo to a personal account
 
+This repository contains a simple go app. You do not need to know go, nor use any golang tooling. We will, unless explicitly specified otherwise, only modify files in the special `.github/` directory.
+
 ## Building and testing the code w/jobs and steps
 
-Recommendation: Use `actionlint` to shorten feedback loops
+1. We'll start with a simple workflow. Create the file `.github/workflows/build.yml` and with the following content:
+
+    ```yml
+    # The "display name", shown in the GitHub UI
+    name: Build
+
+    # Trigger, run on push on any branch
+    on:
+      push:
+
+    jobs:
+      build: # The 'build' job
+        name: "Build application"
+        runs-on: 'ubuntu-latest'
+        steps:
+          # Step to print a simple message
+          - run: echo "Hello world"
+    ```
+
+    `.github/workflows` is a special directory where all workflows should be placed.
+
+2. Before committing and pushing, run `actionlint` from the repository root. It should run with a zero (successful) exit code and no output, since the workflow file is without errors. Try again with `actionlint --verbose` and verify the output to confirm that it found your file. By default, `actionlint` scans all files in `.github/workflows/`
+
+3. Commit and push the workflow to your fork. In the GitHub UI, navigate to the "Actions" tab, and verify that it runs successfully.
+
+> [!NOTE] 
+> *How does this work?*
+> 
+> Let's break down the workflow file.
+> 
+> * `name:` is only used for display in the GitHub UI
+> * `on:` specifies triggers - what causes this workflow to be run
+> * `jobs:` specifies each _job_ in the workflow. A job run on a single virtual machine with a given OS (here: `ubuntu-latest`), and the `steps` share the environment (filesystem, installed tools, environment variables, etc.). Different jobs have separate environments.
+> * `steps:` run sequentially, and might run shell scripts or an action (a reusable, pre-made piece of code). Each step can run conditionally. If a step fails, all later steps fail by default (this is overrideable).
+
+
+4. Let's use some pre-made actions to checkout our code, and install golang tooling. Replace the "hello world" step with the following steps:
+
+    ```yml
+          # Checkout code
+          - uses: actions/checkout@v4
+
+          # Install go 1.21
+          - name: Setup go
+            uses: actions/setup-go@v4
+            with: # Specify input variables to the action
+              go-version: '1.21.x'
+
+          # Shell script to print the version
+          - run: go version
+    ```
+
+5. Again, run `actionlint` before you commit and push. Verify that the correct version is printed.
+
+6. TODO: Build and test
+
+7. TODO: Verify build and test
+
+8. TODO: Docker image & registry
 
 Creating workflow:
-* Build and test for push
 * Creating a Docker image & pis
-* Reference: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
 
 Verifying:
-* Testing failing builds and tests
 * Testing pushing of verify image ends up in Docker registry
 
 ## Testing and linting PRs
