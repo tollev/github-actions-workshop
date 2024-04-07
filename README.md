@@ -95,7 +95,38 @@ TODO:
 * Require build, tests & linting to succeed to merge PR
 * Triggers, how do they work?
 
-## Manually triggering workflows
+## Triggering workflows
+
+Workflows can be triggered in many different ways and can be grouped into four type of events:
+
+* Repository related events
+* External events
+* Scheduled triggering
+* Manual triggering
+
+Repository related events are the most common and are triggered when something happens in the repository. External events and scheduled triggers are not covered in this workshop, but it is nice to know that it is possible. Some example triggers:
+
+```
+on: push # Triggers when a push is made to the repository
+on: pull_request # Triggers when a pull request is opened
+on: workflow_dispatch # Triggers when a user manually requests a workflow to run
+```
+
+Some events have filters can be applied to limit when the workflow should run. For example, the `push`-event has a `branches`-filter that can be used limit the workflow to only run if it is on a specific branch (or branches)
+
+```
+on:
+  push:
+    branches:
+      - main
+      - 'releases/**'  # Wildcard can be used to limit to a specific set of branches
+```
+
+1. Update the `build.yml` workflow and add the event for triggering the workflow when a PR is created
+2. Create a new branch based on main and create a new PR. Verify that the workflow is run on the PR.
+3. Update the `build.yml` workflow and add the event for triggering the workflow manually
+4. Go to the [GitHub Actions page of the workflow](https://github.com/bekk/github-actions-workshop/actions/workflows/build.yml) and verify that the workflow can be run manually
+
 
 TODO:
 * `on: workflow_dispatch`, run a job on a given branch
