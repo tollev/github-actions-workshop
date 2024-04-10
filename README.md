@@ -122,10 +122,12 @@ on:
       - 'releases/**'  # Wildcard can be used to limit to a specific set of branches
 ```
 
-1. Update the `build.yml` workflow and add the event for triggering the workflow when a PR is created
-2. Create a new branch based on main and create a new PR. Verify that the workflow is run on the PR.
-3. Update the `build.yml` workflow and add the event for triggering the workflow manually
-4. Go to the [GitHub Actions page of the workflow](https://github.com/bekk/github-actions-workshop/actions/workflows/build.yml) and verify that the workflow can be run manually
+**Tasks**
+
+1. Update the `build-triggers.yml` workflow and add the event for triggering the workflow when a PR is created
+2. Create a new branch based on main and create a new PR. Verify that the workflow is run.
+3. Update the `build-triggers.yml` workflow and add the event for triggering the workflow manually
+4. Go to the [GitHub Actions page of the workflow](/actions/workflows/build-triggers.yml) and verify that the workflow can be run manually
 
 
 TODO:
