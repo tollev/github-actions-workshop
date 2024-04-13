@@ -202,8 +202,8 @@ on:
 3. Update the `test.yml` workflow and add the event for triggering the workflow manually. Make sure to push the change to main-branch.
 4. Go to the [GitHub Actions page of the workflow](/.github/workflows/test.yml) and verify that the workflow can be run manually. A `Run workflow` button should appear to enable you to manually trigger the workflow. 
 
-    > [!NOTE]
-    > In order for the `Run workflow`-button to appear the workflow must exist on the default branch, typically the main-branch
+> [!NOTE]
+> In order for the `Run workflow`-button to appear the workflow must exist on the default branch, typically the main-branch
 
 ## Manually triggering workflows
 
