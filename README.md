@@ -150,8 +150,22 @@ This repository contains a simple go app. You do not need to know go, nor use an
 
 ## Parallel jobs
 
+Jobs in the same workflow file can be run in parallel if they're not dependent on each other.
+
+1. We also want to lint the app code. In order to get faster feedback, we can lint create a separate job in our `test.yml` workflow file. Create a new job in `test.yml` for linting, which contains the following step:
+
+    ```yml
+          - name: Verify formatting
+            run: |
+              no_unformatted_files="$(gofmt -l $(git ls-files '*.go') | wc -l)"
+              exit "$no_unformatted_files"
+    ```
+
+    You'll have to checkout the code repository and setup go, similarly to before.
+
+2. Push the code and verify that the workflow runs two jobs successfully.
+
 TODO:
-* Build, test & lint for each push to PR
 * Require build, tests & linting to succeed to merge PR
 
 ## Introduction to triggers
