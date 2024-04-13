@@ -112,11 +112,11 @@ This repository contains a simple go app. You do not need to know go, nor use an
             tags: ghcr.io/${{ github.repository }}:latest
     ```
 
-    > [!NOTE]
-    > 
-    > The `${{ <expression> }}` syntax is used to access variables, call functions and more. You can read more in [the documentation](https://docs.github.com/en/actions/learn-github-actions/expressions).
-    >
-    > In this case, `${{ github.repository }}` is a variable from the [`github` context](https://docs.github.com/en/actions/learn-github-actions/contexts#github-context) refers to the owner or and repos, meaning the Docker image will be tagged with `ghcr.io/<user-or-org>/<repo-name>:latest`.
+> [!NOTE]
+> 
+> The `${{ <expression> }}` syntax is used to access variables, call functions and more. You can read more in [the documentation](https://docs.github.com/en/actions/learn-github-actions/expressions).
+>
+> In this case, `${{ github.repository }}` is a variable from the [`github` context](https://docs.github.com/en/actions/learn-github-actions/contexts#github-context) refers to the owner or and repos, meaning the Docker image will be tagged with `ghcr.io/<user-or-org>/<repo-name>:latest`.
 
 2. Push and verify that the action runs correctly.
 
