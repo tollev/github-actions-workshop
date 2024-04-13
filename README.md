@@ -20,20 +20,20 @@ TODO: Likely `gh repo fork --clone` or using the GitHub UI to fork the repo to a
 
 This repository contains a simple go app. You do not need to know go, nor use any golang tooling. We will, unless explicitly specified otherwise, only modify files in the special `.github/` directory.
 
-## Building and testing the code w/jobs and steps
+## Our first wokflow
 
-1. We'll start with a simple workflow. Create the file `.github/workflows/build.yml` and with the following content:
+1. We'll start with a simple workflow. Create the file `.github/workflows/test.yml` and with the following content:
 
     ```yml
     # The "display name", shown in the GitHub UI
-    name: Build
+    name: Build and test
 
     # Trigger, run on push on any branch
     on:
       push:
 
     jobs:
-      build: # The 'build' job
+      test: # The 'build' job
         name: "Build application"
         runs-on: 'ubuntu-latest'
         steps:
@@ -58,7 +58,9 @@ This repository contains a simple go app. You do not need to know go, nor use an
 > * `steps:` run sequentially, and might run shell scripts or an action (a reusable, pre-made piece of code). Each step can run conditionally. If a step fails, all later steps fail by default (this is overrideable).
 
 
-4. Let's use some pre-made actions to checkout our code, and install golang tooling. Replace the "hello world" step with the following steps:
+## Build and test the application
+
+1. Let's use some pre-made actions to checkout our code, and install golang tooling. Replace the "hello world" step with the following steps:
 
     ```yml
           # Checkout code
@@ -74,27 +76,90 @@ This repository contains a simple go app. You do not need to know go, nor use an
           - run: go version
     ```
 
-5. Again, run `actionlint` before you commit and push. Verify that the correct version is printed.
+2. Again, run `actionlint` before you commit and push. Verify that the correct version is printed.
 
-6. TODO: Build and test
+3. Continue by adding steps to build and test the application:
 
-7. TODO: Verify build and test
+    ```yml
+      - name: Build
+        run: go build -v ./...
 
-8. TODO: Docker image & registry
+      - name: Test
+        run: go test ./...
+    ```
 
-Creating workflow:
-* Creating a Docker image & pis
+4. Verify that the workflow fails if the build fails (create a syntax error in any file). Separately, verify that the workflow fail when the tests are incorrect (modify a test case in `internal/greeting/greet_test.go`).
 
-Verifying:
-* Testing pushing of verify image ends up in Docker registry
+## Build Docker image
 
-## Testing and linting PRs
+1. In order to do a container-based deploy. A `Dockerfile` is in the root directory. We'll use actions provided by Docker to build the image.
+
+    ```yml
+    on:
+      push
+
+    jobs:
+      build:
+        steps:
+        - uses: actions/checkout@v4
+        - name: Set up Docker Buildx
+          uses: docker/setup-buildx-action@v3
+
+        - name: Build and push Docker image
+          uses: docker/build-push-action@v5
+          with:
+            push: false
+            tags: ghcr.io/${{ github.repository }}:latest
+    ```
+
+    > [!NOTE]
+    > 
+    > The `${{ <expression> }}` syntax is used to access variables, call functions and more. You can read more in [the documentation](https://docs.github.com/en/actions/learn-github-actions/expressions).
+    >
+    > In this case, `${{ github.repository }}` is a variable from the [`github` context](https://docs.github.com/en/actions/learn-github-actions/contexts#github-context) refers to the owner or and repos, meaning the Docker image will be tagged with `ghcr.io/<user-or-org>/<repo-name>:latest`.
+
+2. Push and verify that the action runs correctly.
+
+3. In order to push the image, we will need to set up [permissions](https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs). With `packages: write` you allow the action to push images to the GitHub Container Registry (GHCR). You can set it at the top-level, for all jobs in the workflow, or for a single job:
+    
+    ```yml
+    jobs:
+      build:
+        permissions:
+          packages: write
+        # ... runs-on, steps, etc
+    ```
+
+4. We'll have to add a step the `docker/login-action@v3` action to login to GHCR, before we push it. Add the following step before the build and push step:
+
+    ```yml
+          - name: Login to GitHub Container Registry
+            uses: docker/login-action@v3
+            with:
+              registry: ghcr.io
+              username: ${{ github.actor }}
+              password: ${{ github.token }}
+    ```
+
+    > [!NOTE]
+    > The `github.token` (often referred to as `GITHUB_TOKEN`) is a special token used to authenticate the workflow job. Read more about it here in [the documentation](https://docs.github.com/en/actions/security-guides/automatic-token-authentication).
+
+5. Finally, modify the build and push step. Set `push: true` to make the action push the image after it's built.
+
+6. Push the changes and make sure the workflow runs successfully. This will push the package to your organization's or your own package registry. The image should be associated with your repo as a package (right-hand side on the main repository page).
+
+## Parallel jobs
 
 TODO:
 * Build, test & lint for each push to PR
 * Require build, tests & linting to succeed to merge PR
+
+## Introduction to triggers
+
+
 * Triggers, how do they work?
 
+Tasks: 1) Rewrite docker build to only be done on main 2) do build and lint on PR only
 ## Manually triggering workflows
 
 TODO:
