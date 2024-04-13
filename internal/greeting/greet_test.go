@@ -4,7 +4,7 @@ import "testing"
 
 func TestGreetOneName(t *testing.T) {
 	name := "Espen Askeladd"
-  names := []string{name}
+	names := []string{name}
 	want := "Hello Espen Askeladd"
 
 	got, err := Greet(names)
@@ -17,7 +17,7 @@ func TestGreetOneName(t *testing.T) {
 }
 
 func TestGreetTwoNames(t *testing.T) {
-  names := []string{"Per", "Espen Askeladd"}
+	names := []string{"Per", "Espen Askeladd"}
 	want := "Hello Per and Espen Askeladd"
 
 	got, err := Greet(names)
@@ -30,7 +30,7 @@ func TestGreetTwoNames(t *testing.T) {
 }
 
 func TestGreetThreeNames(t *testing.T) {
-  names := []string{"Per", "Pål", "Espen Askeladd"}
+	names := []string{"Per", "Pål", "Espen Askeladd"}
 	want := "Hello Per, Pål and Espen Askeladd"
 
 	got, err := Greet(names)
@@ -43,7 +43,7 @@ func TestGreetThreeNames(t *testing.T) {
 }
 
 func TestGreetManyNames(t *testing.T) {
-  names := []string{"Hans", "Grete", "Per", "Pål", "Espen Askeladd"}
+	names := []string{"Hans", "Grete", "Per", "Pål", "Espen Askeladd"}
 	want := "Hello Hans, Grete, Per, Pål and Espen Askeladd"
 
 	got, err := Greet(names)
@@ -56,13 +56,13 @@ func TestGreetManyNames(t *testing.T) {
 }
 
 func TestGreetNone(t *testing.T) {
-  names := []string{}
+	names := []string{}
 
-  got, err := Greet(names)
-  if err == nil {
-    t.Fatalf("Expected returned error, got nil")
-  }
-  if got != "" {
-      t.Fatalf("Expected empty string as return value with the error, got '%s'", got)
-  }
+	got, err := Greet(names)
+	if err == nil {
+		t.Fatalf("Expected returned error, got nil")
+	}
+	if got != "" {
+		t.Fatalf("Expected empty string as return value with the error, got '%s'", got)
+	}
 }
