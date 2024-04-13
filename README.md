@@ -168,12 +168,43 @@ Jobs in the same workflow file can be run in parallel if they're not dependent o
 TODO:
 * Require build, tests & linting to succeed to merge PR
 
-## Introduction to triggers
+## Triggering workflows
 
+Workflows can be triggered in many different ways and can be grouped into four type of events:
 
-* Triggers, how do they work?
+* Repository related events
+* External events
+* Scheduled triggering
+* Manual triggering
 
-Tasks: 1) Rewrite docker build to only be done on main 2) do build and lint on PR only
+Repository related events are the most common and are triggered when something happens in the repository. External events and scheduled triggers are not covered in this workshop, but it is nice to know that it is possible. Some example triggers:
+
+```
+on: push # Triggers when a push is made to the repository
+on: pull_request # Triggers when a pull request is opened or changed
+on: workflow_dispatch # Triggers when a user manually requests a workflow to run
+```
+
+Some events have filters can be applied to limit when the workflow should run. For example, the `push`-event has a `branches`-filter that can be used limit the workflow to only run if it is on a specific branch (or branches)
+
+```
+on:
+  push:
+    branches:
+      - main
+      - 'releases/**'  # Wildcard can be used to limit to a specific set of branches
+```
+
+**Tasks**
+
+1. Rewrite the docker build workflow `build.yml` to only be done on main and rewrite the build and lint workflow `test.yml` to only run on PR changes
+2. Create a new feature branch, add a new commit with a dummy change (to any file) and finally create a PR to main. Verify that the `test.yml` workflow is run on the feature branch. Merge the PR and verify that the `build.yml`-workflow is only run on the main-branch.
+3. Update the `test.yml` workflow and add the event for triggering the workflow manually. Make sure to push the change to main-branch.
+4. Go to the [GitHub Actions page of the workflow](/actions/workflows/test.yml) and verify that the workflow can be run manually. A `Run workflow` button should appear to enable you to manually trigger the workflow. 
+
+    > [!NOTE]
+    > In order for the `Run workflow`-button to appear the workflow must exist on the default branch, typically the main-branch
+
 ## Manually triggering workflows
 
 TODO:
