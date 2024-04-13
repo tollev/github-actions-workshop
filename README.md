@@ -141,8 +141,8 @@ This repository contains a simple go app. You do not need to know go, nor use an
               password: ${{ github.token }}
     ```
 
-    > [!NOTE]
-    > The `github.token` (often referred to as `GITHUB_TOKEN`) is a special token used to authenticate the workflow job. Read more about it here in [the documentation](https://docs.github.com/en/actions/security-guides/automatic-token-authentication).
+> [!NOTE]
+> The `github.token` (often referred to as `GITHUB_TOKEN`) is a special token used to authenticate the workflow job. Read more about it here in [the documentation](https://docs.github.com/en/actions/security-guides/automatic-token-authentication).
 
 5. Finally, modify the build and push step. Set `push: true` to make the action push the image after it's built.
 
