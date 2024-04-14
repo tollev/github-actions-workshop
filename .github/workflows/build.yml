@@ -2,7 +2,7 @@ on:
   push:
 
 jobs:
-  test:
+  build:
     permissions:
       packages: write
     runs-on: 'ubuntu-latest'
