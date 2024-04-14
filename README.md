@@ -207,11 +207,7 @@ on:
 
 ## Reusable workflows
 
-Reusable workflows makes it possible to avoid duplication and reuse common workflow-functionality. They can be shared within a single repository or by the whole organization. 
-
-If the reusable workflow exists in a different repo that repo must either be a:
-  - Public repo and the organization has to grant access to using public shared workflows
-  - Private repo and the repo settings must allow for it to be accessed
+Reusable workflows makes it possible to avoid duplication and reuse common workflow-functionality. They can be [shared within a single repository or by the whole organization](https://docs.github.com/en/actions/using-workflows/reusing-workflows#access-to-reusable-workflows)
 
 To pass information to a shared workflow you should either use the `vars`-context or pass information directly to the workflow.
 
@@ -230,7 +226,6 @@ on:
 To call a reusable workflow in the same repository:
 ```
 jobs:
-  # The job
   call-workflow-passing-data:
     uses: ./.github/workflows/my-reusable-workflow.yml
     with:
