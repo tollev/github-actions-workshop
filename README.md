@@ -165,9 +165,6 @@ Jobs in the same workflow file can be run in parallel if they're not dependent o
 
 2. Push the code and verify that the workflow runs two jobs successfully.
 
-TODO:
-* Require build, tests & linting to succeed to merge PR
-
 ## Triggering workflows
 
 Workflows can be triggered in many different ways and can be grouped into four type of events:
@@ -243,6 +240,13 @@ TODO:
 * Add environments test, prod in GitHub UI
 * Prod should be protected using branch protection rules or rulesets
 * Deploying
+
+## Branch protection rules
+
+Many teams want require code reviews, avoid accidental changes, run tests or ensure that the formatting is correct on all new code before merging. These restrictions can be done using [*branch protection rules*](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches).
+
+You can find it in the [settings](../../settings/branches)
+
 
 ## Extra: Environment variables and secrets
 
