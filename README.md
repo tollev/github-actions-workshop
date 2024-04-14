@@ -11,16 +11,16 @@ The tasks in the workshop can be done using only the built-in GitHub editor. How
 * The [GitHub CLI](https://github.com/cli/cli#installation)
 * [actionlint](https://github.com/rhysd/actionlint/blob/main/docs/install.md)
 * [ShellCheck](https://github.com/koalaman/shellcheck?tab=readme-ov-file#installing) (will be used by actionlint)
-* Editor with YAML and GitHub actions plugins (e.g., VS Code with the [YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) and [GitHub Actions](https://marketplace.visualstudio.com/items?itemName=github.vscode-github-actions) exensions)
+* Editor with YAML and GitHub actions plugins (e.g., VS Code with the [YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) and [GitHub Actions](https://marketplace.visualstudio.com/items?itemName=github.vscode-github-actions) extensions)
 
 
 ## Getting started
 
 TODO: Likely `gh repo fork --clone` or using the GitHub UI to fork the repo to a personal account
 
-This repository contains a simple go app. You do not need to know go, nor use any golang tooling. We will, unless explicitly specified otherwise, only modify files in the special `.github/` directory.
+This repository contains a simple go app. You do not need to know go, nor use any Golang tooling. We will, unless explicitly specified otherwise, only modify files in the special `.github/` directory.
 
-## Our first wokflow
+## Our first workflow
 
 1. We'll start with a simple workflow. Create the file `.github/workflows/test.yml` and with the following content:
 
@@ -54,13 +54,13 @@ This repository contains a simple go app. You do not need to know go, nor use an
 > 
 > * `name:` is only used for display in the GitHub UI
 > * `on:` specifies triggers - what causes this workflow to be run
-> * `jobs:` specifies each _job_ in the workflow. A job run on a single virtual machine with a given OS (here: `ubuntu-latest`), and the `steps` share the environment (filesystem, installed tools, environment variables, etc.). Different jobs have separate environments.
-> * `steps:` run sequentially, and might run shell scripts or an action (a reusable, pre-made piece of code). Each step can run conditionally. If a step fails, all later steps fail by default (this is overrideable).
+> * `jobs:` specifies each _job_ in the workflow. A job runs on a single virtual machine with a given OS (here: `ubuntu-latest`), and the `steps` share the environment (filesystem, installed tools, environment variables, etc.). Different jobs have separate environments.
+> * `steps:` run sequentially, and might run shell scripts or an action (a reusable, pre-made piece of code). Each step can run conditionally. If a step fails, all later steps fail by default (this is overridable).
 
 
 ## Build and test the application
 
-1. Let's use some pre-made actions to checkout our code, and install golang tooling. Replace the "hello world" step with the following steps:
+1. Let's use some pre-made actions to checkout our code, and install Golang tooling. Replace the "hello world" step with the following steps:
 
     ```yml
           # Checkout code
@@ -92,7 +92,7 @@ This repository contains a simple go app. You do not need to know go, nor use an
 
 ## Build Docker image
 
-1. In order to do a container-based deploy. A `Dockerfile` is in the root directory. We'll use actions provided by Docker to build the image.
+1. A `Dockerfile` defining the application image exists in the root directory. To do a container-based deploy we'll use the actions provided by Docker to build the image.
 
     ```yml
     on:
@@ -185,7 +185,7 @@ on: pull_request # Triggers when a pull request is opened or changed
 on: workflow_dispatch # Triggers when a user manually requests a workflow to run
 ```
 
-Some events have filters can be applied to limit when the workflow should run. For example, the `push`-event has a `branches`-filter that can be used limit the workflow to only run if it is on a specific branch (or branches)
+Some events have filters that can be applied to limit when the workflow should run. For example, the `push`-event has a `branches`-filter that can be used limit the workflow to only run if it is on a specific branch (or branches)
 
 ```
 on:
@@ -211,7 +211,7 @@ Reusable workflows makes it possible to avoid duplication and reuse common workf
 
 To pass information to a shared workflow you should either use the `vars`-context or pass information directly to the workflow.
 
-Reusable workflows work are very similar to manual workflows and use the `workflow_dispatch`-trigger. A simple reusable workflow that accepts a config value as input look like this:
+Reusable workflows are very similar to manual workflows and use the `workflow_dispatch`-trigger. A simple reusable workflow that accepts a config value as input look like this:
 ``` 
 on:
   workflow_call:
