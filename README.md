@@ -100,6 +100,7 @@ This repository contains a simple go app. You do not need to know go, nor use an
 
     jobs:
       build:
+        runs-on: 'ubuntu-latest'
         steps:
         - uses: actions/checkout@v4
         - name: Set up Docker Buildx
