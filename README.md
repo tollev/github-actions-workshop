@@ -205,18 +205,41 @@ on:
 > [!NOTE]
 > In order for the `Run workflow`-button to appear the workflow must exist on the default branch, typically the main-branch
 
-## Manually triggering workflows
-
-TODO:
-* `on: workflow_dispatch`, run a job on a given branch
-
-* Limitations: Re-deploying a previous build, dynamically getting tags/sha
-
 ## Reusable workflows
 
-TODO:
-* Create reusable workflow for running tests - replace jobs on PR and main pushes, use workflow_call
-* Create reusable workflow for build, with option to create and push docker image
+Reusable workflows makes it possible to avoid duplication and reuse common workflow-functionality. They can be shared within a single repository or by the whole organization. 
+
+If the reusable workflow exists in a different repo that repo must either be a:
+  - Public repo and the organization has to grant access to using public shared workflows
+  - Private repo and the repo settings must allow for it to be accessed
+
+To pass information to a shared workflow you should either use the `vars`-context or pass information directly to the workflow.
+
+Reusable workflows work are very similar to manual workflows and use the `workflow_dispatch`-trigger. A simple reusable workflow that accepts a config value as input look like this:
+``` 
+on:
+  workflow_call:
+    inputs:
+      config-value:
+        required: true
+        type: string
+```
+
+### Calling a reusable workflow
+
+To call a reusable workflow in the same repository:
+```
+jobs:
+  # The job
+  call-workflow-passing-data:
+    uses: ./.github/workflows/my-reusable-workflow.yml
+    with:
+      config-value: 'Some value'
+```
+
+**Tasks**
+1. Create a reusable workflow that runs the test-job specified in `test.yml` and modify `test.yml` to use the reusable workflow for running the tests
+2. Create a reusable workflow for the `Build and push Docker image` step in `build.yml` and use a input-parameter to determine if the image should be pushed or not
 
 ## Deploying to environment
 
