@@ -245,8 +245,24 @@ TODO:
 
 Many teams want require code reviews, avoid accidental changes, run tests or ensure that the formatting is correct on all new code before merging. These restrictions can be done using [*branch protection rules*](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches).
 
-You can find it in the [settings](../../settings/branches)
+You can find branch protections rules by going to [Settings > Branches](../../settings/branches) (requires repository administrator privileges). Let's create a branch protection rule for the `main` branch:
 
+1. Set `main` as the branch name pattern.
+
+2. Set the setting "Require a pull request before merging", and untick the "Require Approvals" sub-setting.
+
+3. Set the setting "Require status checks to pass before merging", and make sure that both the jobs for linting and testing are selected.
+
+4. Set the "Do not allow bypassing the above settings" setting to disallow administrator overrides, and finally click "Create".
+
+5. Create a change (e.g. text change in the README). Try pushing the change from your local computer directly to `main` and verify that it gets rejected (if you're using the GitHub UI, you will be forced to create a branch).
+
+6. Create a change on a separate branch, push it and create a PR. Verify that you cannot merge it until the status checks have passed.
+
+7. Optionally, turn off the "Require a pull request before merging" and/or "Do not allow bypassing the above settings" settings before you continue, to simplify the rest of the workshop. Read through the list of settings once more and research options you want to know more about in [the documentation](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches).
+
+> [!TIP]
+> Branch protection rules will disallow force pushes for everyone, including administrators, by default, but this can be turned on again in the settings.
 
 ## Extra: Environment variables and secrets
 
