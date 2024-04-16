@@ -236,7 +236,7 @@ jobs:
 
 ## Deploying to environment
 
-For the purposes of this workshop, we'll not actually deploy to any environment, but create a couple of GitHub environments to demonstrate how it would actually work. You can use environments to track deploys to a given environment, and set environment-specific variables and secrets required to deploy your application.
+For the purposes of this workshop, we'll not actually deploy to any environment, but create a couple of GitHub environments to demonstrate how it would work. You can use environments to track deploys to a given environment, and set environment-specific variables required to deploy your application.
 
 1. Navigate to [Settings > Environments](../../settings/environments) and create two new environments: `test` and `production`. For each environment set a unique environment variable, `WORKSHOP_ENV_VARIABLE`.
 
@@ -293,3 +293,4 @@ You can find branch protections rules by going to [Settings > Branches](../../se
 * Gated prod deploy
 * Don't trigger build on non-source code changes
 * Only deploy prod on main branch
+* Environment secrets
