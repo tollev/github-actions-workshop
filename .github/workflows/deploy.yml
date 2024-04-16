@@ -1,0 +1,34 @@
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        type: environment
+      dockerImage:
+        description: 'Docker image'
+        type: string
+      dockerImageSha:
+        description: 'The SHA of the built image'
+        type: string
+
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        type: string
+      dockerImage:
+        description: 'Docker image'
+        type: string
+      dockerImageSha:
+        description: 'The SHA of the built image'
+        type: string
+
+
+jobs:
+  deploy:
+    runs-on: 'ubuntu-latest'
+    environment: ${{ inputs.environment }}
+    steps:
+      - run: |
+          echo "Deploying docker image ${{ inputs.dockerImage }}@${{ inputs.dockerImageSha }}"
+          echo "Special variable: ${{ vars.WORKSHOP_ENV_VARIABLE }}"
