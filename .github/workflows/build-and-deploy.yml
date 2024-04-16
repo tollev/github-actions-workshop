@@ -1,0 +1,32 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    permissions:
+      packages: write
+    uses: ./.github/workflows/reusable.build.yml
+    with:
+      push: true
+  
+  deploy-test:
+    needs: [build]
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: test 
+      imageid: ${{ needs.build.outputs.imageid }}
+      digest: ${{ needs.build.outputs.digest }}
+
+  deploy-prod:
+    needs: [build, deploy-test]
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: production
+      imageid: ${{ needs.build.outputs.imageid }}
+      digest: ${{ needs.build.outputs.digest }}
+
+
+
+
