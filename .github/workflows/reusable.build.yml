@@ -4,9 +4,9 @@ on:
       push:
         type: boolean
     outputs:
-      imageid:
+      imageName:
         description: "The docker image id"
-        value: ${{ jobs.build.outputs.imageid }}
+        value: ${{ jobs.build.outputs.imageName }}
       digest:
         description: "The docker image digest"
         value: ${{ jobs.build.outputs.digest }}
@@ -17,7 +17,7 @@ jobs:
       packages: write
     runs-on: 'ubuntu-latest'
     outputs:
-      imageid: ${{ steps.build-push.outputs.imageid }}
+      imageName: ${{ fromJson(steps.build-push.outputs.metadata)['image.name'] }}
       digest: ${{ steps.build-push.outputs.digest }}
     steps:
       - uses: actions/checkout@v4

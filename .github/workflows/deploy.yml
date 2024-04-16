@@ -5,7 +5,7 @@ on:
         description: 'Deployment environment'
         type: environment
         required: true
-      imageid:
+      imageName:
         description: 'Docker image'
         type: string
         required: true
@@ -20,7 +20,7 @@ on:
         description: 'Deployment environment'
         type: string
         required: true
-      imageid:
+      imageName:
         description: 'Docker image'
         type: string
         required: true
@@ -36,5 +36,5 @@ jobs:
     environment: ${{ inputs.environment }}
     steps:
       - run: |
-          echo "Deploying docker image ${{ inputs.imageid }}@${{ inputs.digest }}"
+          echo "Deploying docker image ${{ inputs.imageName }}@${{ inputs.digest }}"
           echo "Special variable: ${{ vars.WORKSHOP_ENV_VARIABLE }}"

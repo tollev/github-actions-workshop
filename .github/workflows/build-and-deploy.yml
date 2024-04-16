@@ -16,7 +16,7 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       environment: test 
-      imageid: ${{ needs.build.outputs.imageid }}
+      imageName: ${{ needs.build.outputs.imageName }}
       digest: ${{ needs.build.outputs.digest }}
 
   deploy-prod:
@@ -24,7 +24,7 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       environment: production
-      imageid: ${{ needs.build.outputs.imageid }}
+      imageName: ${{ needs.build.outputs.imageName }}
       digest: ${{ needs.build.outputs.digest }}
 
 
