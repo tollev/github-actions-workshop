@@ -22,7 +22,10 @@ Continue reading the workshop README on the forked repo since some of the links 
 
 Start by [enabling GitHub Actions in your fork](../../actions)
 
-## Our first workflow
+> [!TIP]
+> The [Workflow syntax for GitHub Actions](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions) is handy if you're not sure how something works.
+
+## Your first workflow
 
 1. We'll start with a simple workflow. Create the file `.github/workflows/test.yml` with the following content:
 
