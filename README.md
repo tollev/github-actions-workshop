@@ -193,8 +193,6 @@ on:
       - 'releases/**'  # Wildcard can be used to limit to a specific set of branches
 ```
 
-**Tasks**
-
 1. Rewrite the docker build workflow `build.yml` to only be done on main and rewrite the build and lint workflow `test.yml` to only run on PR changes. Push the changes to main-branch and observe that only the build-workflow is executed.
 2. Create a new feature branch, add a new commit with a dummy change (to any file) and finally create a PR to main. Verify that the `test.yml` workflow is run on the feature branch. Merge the PR and verify that the `build.yml`-workflow is only run on the main-branch.
 3. Update the `test.yml` workflow and add the event for triggering the workflow manually. Make sure to push the change to main-branch.
@@ -207,7 +205,7 @@ on:
 
 Reusable workflows makes it possible to avoid duplication and reuse common workflow-functionality. They can be [shared within a single repository or by the whole organization](https://docs.github.com/en/actions/using-workflows/reusing-workflows#access-to-reusable-workflows)
 
-To pass information to a shared workflow you should either use the `vars`-context or pass information directly to the workflow.
+To pass information to a shared workflow you should either use [the `vars`-context](https://docs.github.com/en/actions/learn-github-actions/contexts#about-contexts) or pass information directly to the workflow. The variables for the `vars`-context can be [found here](../../github-actions-workshop/settings/variables/actions).
 
 Reusable workflows use the `workflow_call`-trigger. A simple reusable workflow that accepts a config value as input look like this:
 ``` 
@@ -230,7 +228,6 @@ jobs:
       config-value: 'Some value'
 ```
 
-**Tasks**
 1. Create a reusable workflow that runs the test-job specified in `test.yml` and modify `test.yml` to use the reusable workflow for running the tests
 2. Create a reusable workflow for the `Build and push Docker image` step in `build.yml` and use a input-parameter to determine if the image should be pushed or not
 
@@ -238,11 +235,21 @@ jobs:
 
 For the purposes of this workshop, we'll not actually deploy to any environment, but create a couple of GitHub environments to demonstrate how it would work. You can use environments to track deploys to a given environment, and set environment-specific variables required to deploy your application.
 
+Example of a deployment job to an environment:
+```
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: deploy
+```
+
 1. Navigate to [Settings > Environments](../../settings/environments) and create two new environments: `test` and `production`. For each environment set a unique environment variable, `WORKSHOP_ENV_VARIABLE`.
 
-2. Create a new workflow in `.github/workflows/deploy.yml`. This workflow should trigger on `workflow_dispatch`, and take three inputs: `environment` of type `environment`, and the strings `imageName` and `digest`. It should have a single job, `deploy`, and here it should just "fake" the deploy by printing the `imageName` and `digest`. All inputs should be required ([set `required` to `true`](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_dispatchinputsinput_idrequired). You should also set `environment` for the job (see [the docs](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idenvironment)) and print `${{ vars.WORKSHOP_ENV_VARIABLE }}` to print the special environment variable.
+2. Create a new workflow in `.github/workflows/deploy.yml`. This workflow should trigger on `workflow_dispatch`, and take three inputs: `environment` of type `environment`, and the strings `imageName` and `digest`. It should have a single job, `deploy`, and here it should just "fake" the deploy by printing the `imageName` and `digest`. All inputs should be required [set `required` to `true`](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_dispatchinputsinput_idrequired). The job should run in context of the input environment and print the environment variable `${{ vars.WORKSHOP_ENV_VARIABLE }}` configured for the environment.
 
-3. Push the new workflow, and verify that you get a dropdown to select the environment when you trigger it, and that the value of `WORKSHOP_ENV_VARIABLE` is printed for the chosen environment.
+3. Push the new workflow (to main-branch), and verify that you get a dropdown to select the environment when you trigger it, and that the value of `WORKSHOP_ENV_VARIABLE` is printed for the chosen environment.
 
 ## Job dependencies
 
@@ -256,7 +263,7 @@ Jobs can depend on each other. We'll now create a workflow that builds, then dep
 
     Take a look at [the documentation](https://docs.github.com/en/actions/using-workflows/reusing-workflows#using-outputs-from-a-reusable-workflow) for a complete example of outputs for a reusable workflow.
 
-3. Expand your (non-reusable) build workflow with a couple of more jobs: `deploy-test` and `deploy-production`. These jobs should reuse the `deploy.yml` workflow, use `imageName` and `digest` outputs from the `build` job and use correct environments. You have to specify `needs` for the deploy jobs, take a look at [the `needs` context and corresponding example](https://docs.github.com/en/actions/learn-github-actions/contexts#example-usage-of-the-matrix-context).
+3. Expand your (non-reusable) build workflow with a couple of more jobs: `deploy-test` and `deploy-production`. These jobs should reuse the `deploy.yml` workflow, use `imageName` and `digest` outputs from the `build` job and use correct environments. You have to specify `needs` for the deploy jobs, take a look at [the `needs` context and corresponding example](https://docs.github.com/en/actions/learn-github-actions/contexts#needs-context).
 
 4. Push the workflow, and verify that the jobs run correctly, printing the correct docker image specification and environment variable. The `deploy-test` job should also finish before the `production-test` job starts.
 
