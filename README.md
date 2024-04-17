@@ -16,7 +16,7 @@ The tasks in the workshop can be done using only the built-in GitHub editor. How
 
 ## Getting started
 
-Start by creating your own fork of this repository. If you've installed `gh` you can run `gh repo fork --clone bekk/github-actions-workshop` to create your own fork of this repository and clone it to your machine. Run `gh auth` first if you're using `gh` for the first time. Otherwise, use the GitHub UI to fork this repository.
+Start by creating your own fork of this repository. If you've installed `gh` you can run `gh repo fork --clone bekk/github-actions-workshop` to create your own fork of this repository and clone it to your machine. Run `gh auth` first if you're using `gh` for the first time. Otherwise, use the GitHub UI to fork this repository. If you're reading the tasks in the browser, use the forked repo so that relative links work correctly.
 
 This repository contains a simple go app. You do not need to know go, nor use any Golang tooling. We will, unless explicitly specified otherwise, only modify files in the special `.github/` directory.
 
