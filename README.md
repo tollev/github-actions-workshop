@@ -16,15 +16,15 @@ The tasks in the workshop can be done using only the built-in GitHub editor. How
 
 ## Getting started
 
-Fork the repository to your personal account using the GIT CLI with `gh repo fork --clone` or by using the GitHub UI. Continue reading the workshop README on the forked repo since some of the links will only work there. 
+Start by creating your own fork of this repository. If you've installed `gh` you can run `gh repo fork --clone bekk/github-actions-workshop` to create your own fork of this repository and clone it to your machine. Run `gh auth` first if you're using `gh` for the first time. Otherwise, use the GitHub UI.
 
-This repository contains a simple Go app. You do not need to know Go, nor use any Golang tooling. We will, unless explicitly specified otherwise, only modify files in the special `.github/` directory.
+Continue reading the workshop README on the forked repo since some of the links will only work there.
 
 Start by [enabling GitHub Actions in your fork](../../actions)
 
 ## Our first workflow
 
-1. We'll start with a simple workflow. Create the file `.github/workflows/test.yml` and with the following content:
+1. We'll start with a simple workflow. Create the file `.github/workflows/test.yml` with the following content:
 
     ```yml
     # The "display name", shown in the GitHub UI
@@ -43,9 +43,9 @@ Start by [enabling GitHub Actions in your fork](../../actions)
           - run: echo "Hello world"
     ```
 
-    `.github/workflows` is a special directory where all workflows should be placed.
+    `.github/workflows/` is a special directory where all workflows should be placed.
 
-2. Before committing and pushing, run `actionlint` from the repository root. It should run with a zero (successful) exit code and no output, since the workflow file is without errors. Try again with `actionlint --verbose` and verify the output to confirm that it found your file. By default, `actionlint` scans all files in `.github/workflows/`
+2. (Optional) Before committing and pushing, run `actionlint` from the repository root. It should run with a zero (successful) exit code and no output, since the workflow file is without errors. Try again with `actionlint --verbose` and verify the output to confirm that it found your file. By default, `actionlint` scans all files in `.github/workflows/`
 
 3. Commit and push the workflow to your fork. In the GitHub UI, navigate to the "Actions" tab, and verify that it runs successfully.
 
@@ -57,7 +57,7 @@ Start by [enabling GitHub Actions in your fork](../../actions)
 > * `name:` is only used for display in the GitHub UI
 > * `on:` specifies triggers - what causes this workflow to be run
 > * `jobs:` specifies each _job_ in the workflow. A job runs on a single virtual machine with a given OS (here: `ubuntu-latest`), and the `steps` share the environment (filesystem, installed tools, environment variables, etc.). Different jobs have separate environments.
-> * `steps:` run sequentially, and might run shell scripts or an action (a reusable, pre-made piece of code). Each step can run conditionally. If a step fails, all later steps fail by default (this is overridable).
+> * `steps:` run sequentially, and might run shell scripts or an action (a reusable, pre-made piece of code). Each step can run conditionally. If a step fails, all later steps fail by default. Creating steps to do e.g. cleanup in error situations [is possible](https://docs.github.com/en/actions/learn-github-actions/expressions#status-check-functions).
 
 
 ## Build and test the application
@@ -92,7 +92,7 @@ Start by [enabling GitHub Actions in your fork](../../actions)
 
 4. Verify that the workflow fails if the build fails (create a syntax error in any file). Separately, verify that the workflow fail when the tests are incorrect (modify a test case in `internal/greeting/greet_test.go`).
 
-## Build Docker image
+## Building a Docker image
 
 1. A `Dockerfile` defining the application image exists in the root directory. To do a container-based deploy we'll use the actions provided by Docker to build the image. Create `.github/workflows/build.yml` with the following content:
 
@@ -155,16 +155,15 @@ Start by [enabling GitHub Actions in your fork](../../actions)
 
 Jobs in the same workflow file can be run in parallel if they're not dependent on each other.
 
-1. We also want to lint the app code. In order to get faster feedback, we can create a separate lint-job in our `test.yml` workflow file. Create a new job in `test.yml` for linting, which contains the following step:
+1. We also want to lint the app code. In order to get faster feedback, we can create a separate lint-job in our `test.yml` workflow file. Create a new job in `test.yml` for linting called `lint`, which contains the following step:
 
     ```yml
+          # Also add checkout and setup go steps here, like in previous tasks
           - name: Verify formatting
             run: |
               no_unformatted_files="$(gofmt -l $(git ls-files '*.go') | wc -l)"
               exit "$no_unformatted_files"
     ```
-
-    You'll have to checkout the code repository and setup go, similarly to before.
 
 2. Push the code and verify that the workflow runs two jobs successfully.
 
@@ -201,15 +200,16 @@ on:
 4. Go to the [GitHub Actions page of the workflow](/../../actions/workflows/test.yml) and verify that the workflow can be run manually. A `Run workflow` button should appear to enable you to manually trigger the workflow. 
 
 > [!NOTE]
-> In order for the `Run workflow`-button to appear the workflow must exist on the default branch, typically the main-branch
+> In order for the `Run workflow`-button to appear the workflow must exist on the default branch, typically the `main`-branch
 
 ## Reusable workflows
 
-Reusable workflows makes it possible to avoid duplication and reuse common workflow-functionality. They can be [shared within a single repository or by the whole organization](https://docs.github.com/en/actions/using-workflows/reusing-workflows#access-to-reusable-workflows)
+Reusable workflows makes it possible to avoid duplication and reuse common workflow-functionality. They can be [shared within a single repository or by the whole organization](https://docs.github.com/en/actions/using-workflows/reusing-workflows#access-to-reusable-workflows).
 
 To pass information to a shared workflow you should either use [the `vars`-context](https://docs.github.com/en/actions/learn-github-actions/contexts#about-contexts) or pass information directly to the workflow. The variables for the `vars`-context can be [found here](../../github-actions-workshop/settings/variables/actions).
 
 Reusable workflows use the `workflow_call`-trigger. A simple reusable workflow that accepts a config value as input look like this:
+
 ``` 
 on:
   workflow_call:
@@ -222,6 +222,7 @@ on:
 ### Calling a reusable workflow
 
 To call a reusable workflow in the same repository:
+
 ```
 jobs:
   call-workflow-passing-data:
@@ -231,18 +232,22 @@ jobs:
 ```
 
 1. Create a reusable workflow that runs the test-job specified in `test.yml` and modify `test.yml` to use the reusable workflow for running the tests
-2. Create a reusable workflow for the `Build and push Docker image` step in `build.yml` and use a input-parameter to determine if the image should be pushed or not
+2. Create a reusable workflow for the the code in `build.yml` and use a input-parameter to determine if the image should be pushed or not.
+
+> [!NOTE]
+> A limitation of reusable workflows is that you have to run it as a single job, without the possibility to run additional steps before or after in the same environment. If you want to create reusable code that runs in the same environment, you can create a *custom action* which we will look at later in the workshop.
 
 ## Deploying to environment
 
-For the purposes of this workshop, we'll not actually deploy to any environment, but create a couple of GitHub environments to demonstrate how it would work. You can use environments to track deploys to a given environment, and set environment-specific variables required to deploy your application.
+For the purposes of this workshop, we'll not actually deploy to any environment, but create a couple of GitHub environments to demonstrate how deployments would work. You can use environments to track deploys to a given environment, and set environment-specific variables required to deploy your application.
 
 Example of a deployment job to an environment:
+
 ```
 jobs:
   deployment:
     runs-on: ubuntu-latest
-    environment: production
+    environment: production # This environment applies to all steps in this job
     steps:
       - name: deploy
 ```
@@ -255,7 +260,7 @@ jobs:
 
 ## Job dependencies
 
-Jobs can depend on each other. We'll now create a workflow that builds, then deploys the docker image to test and production, in that order.
+Jobs can depend on each other. We'll now create a workflow that builds, then deploys the Docker image to test and production, in that order.
 
 1. Modify the `deploy.yml` to make it reusable by adding a `workflow_call` trigger. It should have the same inputs as the `workflow_dispatch` trigger.
 
@@ -299,6 +304,7 @@ You can find branch protections rules by going to [Settings > Branches](../../se
 ## Other extras:
 
 
+* Caching docker image build
 * Gated prod deploy
 * Don't trigger build on non-source code changes
 * Only deploy prod on main branch
