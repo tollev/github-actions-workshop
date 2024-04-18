@@ -321,6 +321,25 @@ You can use [conditions](https://docs.github.com/en/actions/using-jobs/using-con
 > [!TIP]
 > You will likely need the `github.ref_name` from the `github` context to do this.
 
+## Control concurrent workflows or jobs
+
+The default behavior of GitHub Actions is to allow multiple jobs or workflows to run [concurrently](https://docs.github.com/en/actions/using-jobs/using-concurrency). 
+
+
+If you have frequent deploys to an environment this can be a problem because you typically don't want to have multiple deploys to the same environment happening at the same time.
+
+The solution is to control the concurrency of a job or workflow by specifying a `concurrency group`:
+
+```
+concurrency:
+  group: prod-deploy
+  cancel-in-progress: true/false
+```
+
+Github Actions ensures that jobs or workflows with the same key are not allowed run at the same time. If `cancel-in-progress` is false the workflow or jobs will run sequentially.
+
+1. Change the `deploy.yml` workflow to ensure that deploys to the same environment is done sequentially
+
 ### Caching docker image layers
 
 GitHub Actions has [caching functionality](https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows). You can save build time by caching Docker image layers. Take a look at [Docker's documentation](https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows) for guidance.
