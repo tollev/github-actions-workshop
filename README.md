@@ -298,15 +298,34 @@ You can find branch protections rules by going to [Settings > Branches](../../se
 > [!TIP]
 > Branch protection rules will disallow force pushes for everyone, including administrators, by default, but this can be turned on again in the settings.
 
-## Extra: Reusable composite actions
+## Extra: Composite actions
 
-* Create reusable composite actions for build, use as part of jobs on PR and main pushes
+Composite actions is a way to create reusable actions. Read through [the composite action documentation](https://docs.github.com/en/actions/creating-actions/creating-a-composite-action) and try creating one.
+
+When creating an action in the same repository as your other workflows, it's customary to put it in `.github/actions/`. E.g., for a `build-image` composite action you would create `.github/action/build-image/action.yml`. You can then refer to it with `uses: ./.github/actions/build-image` in your workflow.
 
 ## Other extras:
 
+### Manual approval before production deploy
 
-* Caching docker image build
-* Gated prod deploy
-* Don't trigger build on non-source code changes
-* Only deploy prod on main branch
-* Environment secrets
+You can enforce manual approval before production deploy. Navigate to [Settings > Environments](../../settings/environments) and enable "Required reviewers" for the production environment.
+
+### Only trigger build on application source changes
+
+You can ensure that certain actions only run when the code changes. E.g., you might not want or need all actions to run for a change in `README.md`. Take a look at [the documentation](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onpushpull_requestpull_request_targetpathspaths-ignore) to see how you can modify the `push` trigger.
+
+### Production deploy for main branch only
+
+You can use [conditions](https://docs.github.com/en/actions/using-jobs/using-conditions-to-control-job-execution) to control wheter a job or step should run. Change your actions so that only the `main` branch can be deployed to production. Other branches can still be deployed to the test environment.
+
+> [!TIP]
+> You will likely need the `github.ref_name` from the `github` context to do this.
+
+### Caching docker image layers
+
+GitHub Actions has [caching functionality](https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows). You can save build time by caching Docker image layers. Take a look at [Docker's documentation](https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows) for guidance.
+
+### Environment secrets
+
+TODO
+
