@@ -50,11 +50,11 @@ This repository contains a simple go app. You do not need to know go, nor use an
 
 3. Commit and push the workflow to your fork. In the GitHub UI, navigate to the "Actions" tab, and verify that it runs successfully.
 
-> [!NOTE] 
+> [!NOTE]
 > *How does this work?*
-> 
+>
 > Let's break down the workflow file.
-> 
+>
 > * `name:` is only used for display in the GitHub UI
 > * `on:` specifies triggers - what causes this workflow to be run
 > * `jobs:` specifies each _job_ in the workflow. A job runs on a single virtual machine with a given OS (here: `ubuntu-latest`), and the `steps` share the environment (filesystem, installed tools, environment variables, etc.). Different jobs have separate environments.
@@ -109,23 +109,32 @@ This repository contains a simple go app. You do not need to know go, nor use an
         - name: Set up Docker Buildx
           uses: docker/setup-buildx-action@v3
 
+        - name: Use lowercase repository name as docker image name
+          run:
+            export REPOSITORY=${{ github.repository }}
+            echo "DOCKER_IMAGE_NAME=${REPOSITORY@L}" >> "$GITHUB_ENV"
+
         - name: Build and push Docker image
           uses: docker/build-push-action@v5
           with:
             push: false
-            tags: ghcr.io/${{ github.repository }}:latest
+            tags: ghcr.io/${{ env.DOCKER_IMAGE_NAME }}:latest
     ```
 
 > [!NOTE]
-> 
+>
 > The `${{ <expression> }}` syntax is used to access variables, call functions and more. You can read more in [the documentation](https://docs.github.com/en/actions/learn-github-actions/expressions).
 >
-> In this case, `${{ github.repository }}` is a variable from the [`github` context](https://docs.github.com/en/actions/learn-github-actions/contexts#github-context) refers to the owner or and repos, meaning the Docker image will be tagged with `ghcr.io/<user-or-org>/<repo-name>:latest`.
+> In this case, `${{ github.repository }}` is a variable from the [`github` context](https://docs.github.com/en/actions/learn-github-actions/contexts#github-context) and will be `<user-or-org>/<repo-name>`. `github.repository` may contain uppercase letters, but the a Docker image must be all lower case, so we transform the repository using a [shell parameter expansion](https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html) in a separate step. The lower-cased repository name is set as an *environment variable*.
+>
+> GitHub has a list of [default environment variables](https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables). In this case, we're defining our own environment variable by [writing to the special `$GITHUB_ENV` file](https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable). When setting environment variables this way, it will be available in subsequent steps.
+>
+> It is also possible to define environment variables by using an `env` property at the [workflow](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#env), [job](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idenv) or [step](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsenv) scopes. This is usually simpler, when possible.
 
 2. Push and verify that the action runs correctly.
 
 3. In order to push the image, we will need to set up [permissions](https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs). With `packages: write` you allow the action to push images to the GitHub Container Registry (GHCR). You can set it at the top-level, for all jobs in the workflow, or for a single job:
-    
+
     ```yml
     jobs:
       build:
@@ -198,7 +207,7 @@ on:
 1. Rewrite the docker build workflow `build.yml` to only be done on main and rewrite the build and lint workflow `test.yml` to only run on PR changes. Push the changes to main-branch and observe that only the build-workflow is executed.
 2. Create a new feature branch, add a new commit with a dummy change (to any file) and finally create a PR to main. Verify that the `test.yml` workflow is run on the feature branch. Merge the PR and verify that the `build.yml`-workflow is only run on the main-branch.
 3. Update the `test.yml` workflow and add the event for triggering the workflow manually. Make sure to push the change to main-branch.
-4. Go to the [GitHub Actions page of the workflow](/../../actions/workflows/test.yml) and verify that the workflow can be run manually. A `Run workflow` button should appear to enable you to manually trigger the workflow. 
+4. Go to the [GitHub Actions page of the workflow](/../../actions/workflows/test.yml) and verify that the workflow can be run manually. A `Run workflow` button should appear to enable you to manually trigger the workflow.
 
 > [!NOTE]
 > In order for the `Run workflow`-button to appear the workflow must exist on the default branch, typically the `main`-branch
@@ -211,7 +220,7 @@ To pass information to a shared workflow you should either use [the `vars`-conte
 
 Reusable workflows use the `workflow_call`-trigger. A simple reusable workflow that accepts a config value as input look like this:
 
-``` 
+```
 on:
   workflow_call:
     inputs:
@@ -308,7 +317,7 @@ When creating an action in the same repository as your other workflows, it's cus
 
 ### Control concurrent workflows or jobs
 
-The default behavior of GitHub Actions is to allow multiple jobs or workflows to run [concurrently](https://docs.github.com/en/actions/using-jobs/using-concurrency). 
+The default behavior of GitHub Actions is to allow multiple jobs or workflows to run [concurrently](https://docs.github.com/en/actions/using-jobs/using-concurrency).
 
 
 If you have frequent deploys to an environment this can be a problem because you typically don't want to have multiple deploys to the same environment happening at the same time.
