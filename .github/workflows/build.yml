@@ -1,5 +1,8 @@
-on: pull_request # Triggers when a pull request is opened or changed
-
+on:
+  push:
+    branches:
+      - main
+      - 'releases/**'  # Wildcard can be used to limit to a specific set of branches
 jobs:
   build:
     permissions:
