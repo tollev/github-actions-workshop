@@ -23,7 +23,8 @@ jobs:
       - run: go version
 
       - name: Build
-        run: go build -v ./...
+        run: go build -v ./asd
+        ..
 
       - name: Test
         run: go test ./...
