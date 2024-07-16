@@ -9,13 +9,13 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Use lowercase repository name as docker image name
-      run:
-        export REPOSITORY=${{ github.repository }}
-        echo "DOCKER_IMAGE_NAME=${REPOSITORY@L}" >> "$GITHUB_ENV"
+    #- name: Use lowercase repository name as docker image name
+    #  run:
+    #    export REPOSITORY=${{ github.repository }}
+    #    echo "DOCKER_IMAGE_NAME=${REPOSITORY@L}" >> "$GITHUB_ENV"
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
         push: false
-        tags: ghcr.io/${{ env.DOCKER_IMAGE_NAME }}:latest
+        tags: ghcr.io/tollev/github-actions.workshop:latest
